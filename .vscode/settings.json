@@ -1,0 +1,7 @@
+{
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.quoteStyle": "single",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+}
