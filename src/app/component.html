@@ -1,1 +1,7 @@
+<nav class="navigation">
+  @for (route of _routes; track $index) {
+  <a class="route" [routerLink]="route.path">{{ route.path }}</a>
+  }
+</nav>
+
 <router-outlet />
