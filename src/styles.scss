@@ -1,0 +1,28 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui;
+}
+
+html {
+  overflow: hidden;
+  box-sizing: border-box;
+
+  >body {
+    position: fixed;
+    margin: 0;
+    height: 100dvh;
+    width: 100dvw;
+
+    overflow: hidden;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
