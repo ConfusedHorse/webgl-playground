@@ -25,8 +25,6 @@ export class MandelbrotComponent {
     const camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1000);
     this.#scene = new THREE.Scene();
 
-    this.#drawCube(width, height);
-
     renderer.render(this.#scene, camera);
   }
 
