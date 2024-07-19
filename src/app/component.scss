@@ -35,6 +35,11 @@
       &:active {
         background-color: hsl(0, 0%, 30%);
       }
+
+      &.selected {
+        background-color: hsl(200, 100%, 25%);
+        pointer-events: none;
+      }
     }
   }
 }
