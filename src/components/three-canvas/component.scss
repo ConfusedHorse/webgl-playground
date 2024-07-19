@@ -1,5 +1,6 @@
 :host {
-  flex: 1;
+  flex: 1 1 0;
+  overflow: hidden;
 
   >.canvas {
     border: solid 1px white;

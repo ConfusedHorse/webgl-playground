@@ -15,12 +15,40 @@ import { vertexShader } from './shader/vertex';
 })
 export class MandelbrotComponent {
 
-  _doSomething(renderer: THREE.WebGLRenderer): void {
-    const { width, height } = renderer.domElement
+  #renderer?: THREE.WebGLRenderer;
+  #scene?: THREE.Scene;
+
+  _setupScene(renderer: THREE.WebGLRenderer): void {
+    this.#renderer = renderer;
+    const { width, height } = renderer.domElement;
 
     const camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1000);
-    const scene = new THREE.Scene();
+    this.#scene = new THREE.Scene();
 
+    this.#drawCube(width, height);
+
+    renderer.render(this.#scene, camera);
+  }
+
+  _updateScene({ width, height }: DOMRectReadOnly): void {
+    if (!this.#renderer || !this.#scene) {
+      return;
+    }
+
+    const camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1000);
+    this.#renderer.setSize(width, height);
+
+    this.#drawCube(width, height);
+
+    this.#renderer.render(this.#scene, camera);
+  }
+
+  #drawCube(width: number, height: number) {
+    if (!this.#renderer || !this.#scene) {
+      return;
+    }
+
+    this.#scene.clear();
     const geometry = new THREE.BoxGeometry(width, height, 1);
     const material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
@@ -31,9 +59,7 @@ export class MandelbrotComponent {
     cube.position.x = .5 * width;
     cube.position.y = .5 * height;
 
-    scene.add(cube);
-
-    renderer.render(scene, camera);
+    this.#scene.add(cube);
   }
 
 }
