@@ -22,13 +22,11 @@ export class MandelbrotComponent {
     this.#renderer = renderer;
     const { width, height } = renderer.domElement;
 
-    const camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1000);
     this.#scene = new THREE.Scene();
-
-    renderer.render(this.#scene, camera);
+    this._updateScene({ width, height });
   }
 
-  _updateScene({ width, height }: DOMRectReadOnly): void {
+  _updateScene({ width, height }: Pick<DOMRectReadOnly, 'width' | 'height'>): void {
     if (!this.#renderer || !this.#scene) {
       return;
     }
