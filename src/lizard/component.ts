@@ -1,28 +1,23 @@
 import { Component, effect, inject } from '@angular/core';
-import * as THREE from 'three';
 import { ThreeCanvasComponent } from '../components/three-canvas/component';
+import { RENDERER_FEATURE } from '../components/three-canvas/model';
 import { LizardStore } from './store';
 
 @Component({
   standalone: true,
   imports: [ThreeCanvasComponent],
-  providers: [LizardStore],
   selector: 'app-lizard',
   templateUrl: './component.html',
-  styleUrls: ['./component.scss']
+  styleUrls: ['./component.scss'],
+
+  providers: [
+    LizardStore,
+    { provide: RENDERER_FEATURE, useExisting: LizardStore }
+  ],
 })
 export class LizardComponent {
 
   #lizardStore = inject(LizardStore);
-
-  _initialize(renderer: THREE.WebGLRenderer): void {
-    this.#lizardStore.initialize(renderer);
-    this.#lizardStore.updateDimensions(renderer.domElement);
-  }
-
-  _sizeChange(size: Pick<DOMRectReadOnly, 'width' | 'height'>): void {
-    this.#lizardStore.updateDimensions(size);
-  }
 
   constructor() {
     effect(() => {

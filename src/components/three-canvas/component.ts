@@ -1,7 +1,8 @@
-import { Component, computed, ElementRef, inject, OnDestroy, OnInit, output, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, tap } from 'rxjs';
+import { Subject } from 'rxjs';
 import * as THREE from 'three';
+import { RENDERER_FEATURE } from './model';
 
 @Component({
   standalone: true,
@@ -11,7 +12,7 @@ import * as THREE from 'three';
 })
 export class ThreeCanvasComponent implements OnInit, OnDestroy {
 
-  #renderer?: THREE.WebGLRenderer;
+  #rendererFeature = inject(RENDERER_FEATURE);
 
   protected readonly _canvas = viewChild.required('canvas', { read: ElementRef });
 
@@ -20,21 +21,18 @@ export class ThreeCanvasComponent implements OnInit, OnDestroy {
   readonly #size = new Subject<DOMRectReadOnly>();
   readonly #observer = new ResizeObserver(entries => this.#size.next(entries[0].contentRect));
 
-  public readonly rendererChange = output<THREE.WebGLRenderer>();
-  public readonly sizeChange = output<DOMRectReadOnly>();
-
   constructor() {
     this.#size.pipe(
-      tap(domRectReadOnly => this.sizeChange.emit(domRectReadOnly)),
       takeUntilDestroyed(),
-    ).subscribe(({ width, height }) => this.#renderer?.setSize(width, height));
+    ).subscribe(this.#rendererFeature.updateDimensions);
   }
 
   ngOnInit(): void {
     this.#observer.observe(this.#element);
 
-    this.#renderer = this.#createRenderer();
-    this.rendererChange.emit(this.#renderer);
+    const renderer = this.#createRenderer();
+    this.#rendererFeature.initialize(renderer);
+    this.#rendererFeature.updateDimensions(renderer.domElement);
   }
 
   ngOnDestroy(): void {
@@ -47,5 +45,9 @@ export class ThreeCanvasComponent implements OnInit, OnDestroy {
     renderer.setSize(width, height);
 
     return renderer;
+  }
+
+  _sizeChange(size: Pick<DOMRectReadOnly, 'width' | 'height'>): void {
+    this.#rendererFeature.updateDimensions(size);
   }
 }
