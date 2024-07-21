@@ -12,6 +12,7 @@ export class LizardComponent {
 
   #lizardStore = inject(LizardStore);
 
+  // #radii = [50];
   #radii = [50, 50, 50, 50, 50, 50, 50, 50, 50];
 
   protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });

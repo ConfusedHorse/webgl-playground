@@ -1,17 +1,17 @@
-import * as THREE from 'three';
+import { OrthographicCamera, Scene, Vector2, WebGLRenderer } from 'three';
 
 export type Dimension = Pick<DOMRectReadOnly, 'width' | 'height'>;
 
 export interface RendererState {
   initialized: boolean;
 
-  renderer: THREE.WebGLRenderer;
-  scene: THREE.Scene;
+  renderer: WebGLRenderer;
+  scene: Scene;
   dimension: Dimension;
-  camera: THREE.OrthographicCamera;
+  camera: OrthographicCamera;
 
   resizeObserver: ResizeObserver;
-  mousePosition: THREE.Vector2;
+  mousePosition: Vector2;
 }
 
 export const INITIAL_STATE: RendererState = {
