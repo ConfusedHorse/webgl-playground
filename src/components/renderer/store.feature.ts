@@ -1,5 +1,5 @@
 import { toSignal } from '@angular/core/rxjs-interop';
-import { patchState, signalStoreFeature, withComputed, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStoreFeature, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { auditTime, fromEvent, map, startWith } from 'rxjs';
 import * as THREE from 'three';
 import { Dimension, INITIAL_STATE } from './model';
@@ -22,12 +22,19 @@ export function withRenderer() {
     })),
 
     withMethods(store => ({
-      initialize(renderer: THREE.WebGLRenderer): void {
+      initialize(canvas: HTMLCanvasElement): void {
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        const resizeObserver = new ResizeObserver(entries => this.updateDimensions(entries[0].contentRect));
+        resizeObserver.observe(renderer.domElement.parentElement as Element);
+
         patchState(store, () => ({
           renderer,
           scene: new THREE.Scene(),
           initialized: true,
+          resizeObserver,
         }));
+
+        this.updateDimensions(renderer.domElement);
       },
       updateDimensions(dimension: Dimension): void {
         const { width, height } = dimension;
@@ -35,10 +42,15 @@ export function withRenderer() {
 
         patchState(store, ({ renderer }) => {
           renderer?.setSize(width, height);
-
           return { dimension, camera };
         });
       },
     })),
+
+    withHooks({
+      onDestroy({ renderer, resizeObserver }) {
+        resizeObserver().unobserve(renderer().domElement.parentElement as Element);
+      }
+    })
   );
 }

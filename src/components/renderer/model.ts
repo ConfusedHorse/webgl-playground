@@ -1,11 +1,6 @@
-import { InjectionToken } from '@angular/core';
 import * as THREE from 'three';
-import { withRenderer } from './store.feature';
 
 export type Dimension = Pick<DOMRectReadOnly, 'width' | 'height'>;
-
-export type RendererFeature = ReturnType<ReturnType<typeof withRenderer>>['methods'];
-export const RENDERER_FEATURE = new InjectionToken<RendererFeature>('inject renderer feature store');
 
 export interface RendererState {
   initialized: boolean;
@@ -15,6 +10,7 @@ export interface RendererState {
   dimension: Dimension;
   camera: THREE.OrthographicCamera;
 
+  resizeObserver: ResizeObserver;
   mousePosition: THREE.Vector2;
 }
 
@@ -26,5 +22,6 @@ export const INITIAL_STATE: RendererState = {
   dimension: null!,
   camera: null!,
 
+  resizeObserver: null!,
   mousePosition: null!,
 };

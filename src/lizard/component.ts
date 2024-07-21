@@ -1,27 +1,25 @@
-import { Component, effect, inject } from '@angular/core';
-import { ThreeCanvasComponent } from '../components/three-canvas/component';
-import { RENDERER_FEATURE } from '../components/three-canvas/model';
+import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
 import { LizardStore } from './store';
 
 @Component({
   standalone: true,
-  imports: [ThreeCanvasComponent],
+  providers: [LizardStore],
   selector: 'app-lizard',
   templateUrl: './component.html',
   styleUrls: ['./component.scss'],
-
-  providers: [
-    LizardStore,
-    { provide: RENDERER_FEATURE, useExisting: LizardStore }
-  ],
 })
 export class LizardComponent {
 
   #lizardStore = inject(LizardStore);
 
+  protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });
+
   constructor() {
+    effect(() => this.#lizardStore.initialize(this._canvas().nativeElement), { allowSignalWrites: true });
+
     effect(() => {
       const { renderer, scene, camera, circle } = this.#lizardStore;
+
       scene().clear();
       scene().add(circle());
       renderer().render(scene(), camera());

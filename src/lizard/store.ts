@@ -2,7 +2,7 @@
 import { computed } from '@angular/core';
 import { signalStore, withComputed } from '@ngrx/signals';
 import * as THREE from 'three';
-import { withRenderer } from '../components/three-canvas/store.feature';
+import { withRenderer } from '../components/renderer/store.feature';
 
 export const LizardStore = signalStore(
   withRenderer(),
