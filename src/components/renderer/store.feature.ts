@@ -22,20 +22,6 @@ export function withRenderer() {
     })),
 
     withMethods(store => ({
-      initialize(canvas: HTMLCanvasElement): void {
-        const renderer = new THREE.WebGLRenderer({ canvas });
-        const resizeObserver = new ResizeObserver(entries => this.updateDimensions(entries[0].contentRect));
-        resizeObserver.observe(renderer.domElement.parentElement as Element);
-
-        patchState(store, () => ({
-          renderer,
-          scene: new THREE.Scene(),
-          initialized: true,
-          resizeObserver,
-        }));
-
-        this.updateDimensions(renderer.domElement);
-      },
       updateDimensions(dimension: Dimension): void {
         const { width, height } = dimension;
         const camera = new THREE.OrthographicCamera(0, width, 0, height, 0, 1);
@@ -46,11 +32,27 @@ export function withRenderer() {
         });
       },
     })),
+    withMethods(store => ({
+      initialize(canvas: HTMLCanvasElement): void {
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        const resizeObserver = new ResizeObserver(entries => store.updateDimensions(entries[0].contentRect));
+        resizeObserver.observe(renderer.domElement.parentElement as Element);
+
+        patchState(store, () => ({
+          renderer,
+          scene: new THREE.Scene(),
+          initialized: true,
+          resizeObserver,
+        }));
+
+        store.updateDimensions(renderer.domElement);
+      },
+    })),
 
     withHooks({
       onDestroy({ renderer, resizeObserver }) {
         resizeObserver().unobserve(renderer().domElement.parentElement as Element);
       }
-    })
+    }),
   );
 }

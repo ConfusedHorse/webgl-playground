@@ -1,9 +1,13 @@
-import * as THREE from 'three';
+import { Vector2 } from 'three';
 
 export interface LizardState {
-  circle: THREE.Mesh;
+  radii: ReadonlyArray<number>;
+  joints: ReadonlyArray<Vector2>;
+  linkSize: number;
 }
 
 export const INITIAL_STATE: LizardState = {
-  circle: null!,
+  radii: [],
+  joints: null!,
+  linkSize: 50,
 };

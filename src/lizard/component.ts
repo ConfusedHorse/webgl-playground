@@ -12,18 +12,16 @@ export class LizardComponent {
 
   #lizardStore = inject(LizardStore);
 
+  #radii = [50, 50, 50, 50, 50, 50, 50, 50, 50];
+
   protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });
 
   constructor() {
-    effect(() => this.#lizardStore.initialize(this._canvas().nativeElement), { allowSignalWrites: true });
-
     effect(() => {
-      const { renderer, scene, camera, circle } = this.#lizardStore;
-
-      scene().clear();
-      scene().add(circle());
-      renderer().render(scene(), camera());
-    });
+      const { initialize, setRadii } = this.#lizardStore;
+      initialize(this._canvas().nativeElement);
+      setRadii(this.#radii);
+    }, { allowSignalWrites: true });
   }
 
 }
