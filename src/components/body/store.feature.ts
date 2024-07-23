@@ -1,18 +1,42 @@
-import { effect, untracked } from '@angular/core';
-import { patchState, signalStoreFeature, withHooks, withMethods, withState } from '@ngrx/signals';
-import { CircleGeometry, Line, LineBasicMaterial, Vector2 } from 'three';
+import { computed, effect, untracked } from '@angular/core';
+import { patchState, signalStoreFeature, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
+import { Vector2 } from 'three';
 import { withRenderer } from '../renderer/store.feature';
 import { constrainAngle, getPosition, getVectorAngle, INITIAL_STATE, Joint, PI } from './model';
 
-export function withChain() {
+export function withBody() {
   return signalStoreFeature(
     withState(INITIAL_STATE),
     withRenderer(),
 
+    withComputed(({ joints, radii }) => ({
+      dots: computed<Vector2[]>(() => {
+        if (!joints()) {
+          return [];
+        }
+
+        const dots: Vector2[] = [];
+        joints().forEach(({ position, angle }, i) => {
+          if (!i) {
+            return;
+          }
+          const left = getPosition(position, angle + PI / 2, radii()[i - 1] / 2);
+          const right = getPosition(position, angle - PI / 2, radii()[i - 1] / 2);
+
+          dots.push(left, right);
+        });
+        return dots;
+        // return joints().map(({ position }) => position);
+      }),
+    })),
+
     withMethods(store => ({
       setRadii(radii: ReadonlyArray<number>): void {
         patchState(store, () => ({ radii }));
-      }
+      },
+      setAngleConstraint(angleConstraint: number): void {
+        patchState(store, () => ({ angleConstraint }));
+      },
     })),
 
     withHooks({
@@ -37,7 +61,7 @@ export function withChain() {
 
         // update joints
         effect(() => {
-          const { mousePosition, joints: previous, jointDistance: linkSize, scene, camera, renderer, radii } = store;
+          const { mousePosition, joints: previous, jointDistance: linkSize, angleConstraint } = store;
 
           const previousJoints = untracked(previous);
           const currentMousePosition = mousePosition();
@@ -54,26 +78,11 @@ export function withChain() {
             const precedingJoint = joints[index - 1];
 
             const angle = getVectorAngle(previousJoint.position, precedingJoint.position);
-            const constrainedAngle = constrainAngle(precedingJoint.angle, angle);
+            const constrainedAngle = constrainAngle(precedingJoint.angle, angle, angleConstraint());
             const position = getPosition(precedingJoint.position, constrainedAngle, linkSize());
 
             joints.push({ position, angle: constrainedAngle });
           }
-
-          scene().clear(); // debug
-          joints.forEach((joint, i) => { // debug
-            if (!i) {
-              return;
-            }
-
-            const geometry = new CircleGeometry(radii()[i - 1], 16, joint.angle);
-            const material = new LineBasicMaterial({ color: 0x005580 });
-            const circle = new Line(geometry, material);
-            circle.position.x = joint.position.x;
-            circle.position.y = joint.position.y;
-            scene().add(circle);
-          });
-          renderer().render(scene(), camera());
 
           patchState(store, () => ({ joints }));
         }, { allowSignalWrites: true });

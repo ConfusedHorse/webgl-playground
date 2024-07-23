@@ -5,7 +5,7 @@ const LINK_DISTANCE = 50;
 export const PI = Math.PI;
 export const TWO_PI = PI * 2;
 
-export const ANGLE_CONSTRAINT_RAD = PI / 8;
+export const DEFAULT_ANGLE_CONSTRAINT_RAD = PI / 8;
 
 export interface Joint {
   position: Vector2;
@@ -14,14 +14,18 @@ export interface Joint {
 
 export interface LizardState {
   radii: ReadonlyArray<number>;
-  joints: ReadonlyArray<Joint>;
   jointDistance: number;
+  angleConstraint: number;
+
+  joints: ReadonlyArray<Joint>;
 }
 
 export const INITIAL_STATE: LizardState = {
   radii: [],
-  joints: null!,
   jointDistance: LINK_DISTANCE,
+  angleConstraint: DEFAULT_ANGLE_CONSTRAINT_RAD,
+
+  joints: null!,
 };
 
 export function getVectorAngle(v1: Vector2, v2: Vector2): number {
@@ -33,7 +37,7 @@ export function getPosition(origin: Vector2, angle: number, distance: number): V
   return new Vector2(origin.x + distance * Math.cos(angle), origin.y + distance * Math.sin(angle));
 }
 
-export function constrainAngle(anchor: number, angle: number, constraint: number = ANGLE_CONSTRAINT_RAD): number {
+export function constrainAngle(anchor: number, angle: number, constraint: number = DEFAULT_ANGLE_CONSTRAINT_RAD): number {
   const angleDifference = Math.atan2(Math.sin(anchor - angle), Math.cos(anchor - angle));
   return Math.abs(angleDifference) > constraint ? anchor - Math.sign(angleDifference) * constraint : angle;
 }
