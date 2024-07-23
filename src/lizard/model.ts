@@ -33,7 +33,7 @@ export function getPosition(origin: Vector2, angle: number, distance: number): V
   return new Vector2(origin.x + distance * Math.cos(angle), origin.y + distance * Math.sin(angle));
 }
 
-export function constrainAngle(angle: number, anchor: number, constraint: number = ANGLE_CONSTRAINT_RAD): number {
+export function constrainAngle(anchor: number, angle: number, constraint: number = ANGLE_CONSTRAINT_RAD): number {
   const angleDifference = Math.atan2(Math.sin(anchor - angle), Math.cos(anchor - angle));
   return Math.abs(angleDifference) > constraint ? anchor - Math.sign(angleDifference) * constraint : angle;
 }

@@ -46,18 +46,18 @@ export const LizardStore = signalStore(
         }
 
         const direction = getVectorAngle(previousJoints[0].position, currentMousePosition);
-        const weightedDirection = constrainAngle(direction, previousJoints[0].angle, PI / 32);
-        const joints: Array<Joint> = [{ position: currentMousePosition, angle: weightedDirection }];
+        const constrainedDirection = constrainAngle(previousJoints[0].angle, direction, PI / 32);
+        const joints: Array<Joint> = [{ position: currentMousePosition, angle: constrainedDirection }];
 
         for (let index = 1; index < previousJoints.length; index++) {
           const previousJoint = previousJoints[index];
           const precedingJoint = joints[index - 1];
 
-          const vectorAngle = getVectorAngle(previousJoint.position, precedingJoint.position);
-          const angle = constrainAngle(vectorAngle, precedingJoint.angle);
-          const position = getPosition(precedingJoint.position, angle, linkSize());
+          const angle = getVectorAngle(previousJoint.position, precedingJoint.position);
+          const constrainedAngle = constrainAngle(precedingJoint.angle, angle);
+          const position = getPosition(precedingJoint.position, constrainedAngle, linkSize());
 
-          joints.push({ position, angle });
+          joints.push({ position, angle: constrainedAngle });
         }
 
         scene().clear(); // debug
