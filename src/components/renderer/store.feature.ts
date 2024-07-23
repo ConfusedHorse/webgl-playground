@@ -52,7 +52,7 @@ export function withRenderer() {
     withHooks({
       onDestroy({ renderer, resizeObserver }) {
         resizeObserver().unobserve(renderer().domElement.parentElement as Element);
-      }
+      },
     }),
   );
-}
+};
