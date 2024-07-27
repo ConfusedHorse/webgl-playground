@@ -20,7 +20,7 @@ export class LizardComponent {
       const { initialize, setRadii, setAngleConstraint } = this.#lizardStore;
       initialize(this._canvas().nativeElement);
       setRadii(LIZARD_RADII);
-      // setAngleConstraint(2 * Math.PI);
+      setAngleConstraint(Math.PI / 12);
     }, { allowSignalWrites: true });
   }
 

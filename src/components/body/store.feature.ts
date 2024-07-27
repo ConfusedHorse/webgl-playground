@@ -15,18 +15,21 @@ export function withBody() {
           return [];
         }
 
-        const dots: Vector2[] = [];
-        joints().forEach(({ position, angle }, i) => {
-          if (!i) {
-            return;
-          }
-          const left = getPosition(position, angle + PI / 2, radii()[i - 1] / 2);
-          const right = getPosition(position, angle - PI / 2, radii()[i - 1] / 2);
+        const [_, ...segments] = joints();
 
-          dots.push(left, right);
-        });
-        return dots;
-        // return joints().map(({ position }) => position);
+        const distances = radii().map(radius => radius * .5);
+        const { position: nosePosition, angle: noseAngle } = joints()[1];
+        const nose = [PI * .75, PI, PI * 1.25].map(offset =>
+          getPosition(nosePosition, noseAngle + offset, distances[1])
+        );
+        const right = segments.map(({ position, angle }, i) =>
+          getPosition(position, angle - PI * .5, distances[i])
+        );
+        const left = segments.map(({ position, angle }, i) =>
+          getPosition(position, angle + PI * .5, distances[i])
+        ).reverse();
+
+        return [...nose, ...right, ...left];
       }),
     })),
 
@@ -77,9 +80,10 @@ export function withBody() {
             const previousJoint = previousJoints[index];
             const precedingJoint = joints[index - 1];
 
+            const distanceScalar = index === 1 ? 2 : 1;
             const angle = getVectorAngle(previousJoint.position, precedingJoint.position);
             const constrainedAngle = constrainAngle(precedingJoint.angle, angle, angleConstraint());
-            const position = getPosition(precedingJoint.position, constrainedAngle, linkSize());
+            const position = getPosition(precedingJoint.position, constrainedAngle, distanceScalar * linkSize());
 
             joints.push({ position, angle: constrainedAngle });
           }
