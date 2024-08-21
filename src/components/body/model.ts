@@ -1,10 +1,10 @@
 import { Vector2 } from 'three';
 
-const LINK_DISTANCE = 50;
-
 export const PI = Math.PI;
 export const TWO_PI = PI * 2;
 
+export const DEFAULT_FACTOR = 1;
+export const DEFAULT_LINK_DISTANCE = 50;
 export const DEFAULT_ANGLE_CONSTRAINT_RAD = PI / 8;
 
 export interface Joint {
@@ -13,6 +13,7 @@ export interface Joint {
 }
 
 export interface LizardState {
+  factor: number;
   radii: ReadonlyArray<number>;
   jointDistance: number;
   angleConstraint: number;
@@ -21,8 +22,9 @@ export interface LizardState {
 }
 
 export const INITIAL_STATE: LizardState = {
+  factor: DEFAULT_FACTOR,
   radii: [],
-  jointDistance: LINK_DISTANCE,
+  jointDistance: DEFAULT_LINK_DISTANCE,
   angleConstraint: DEFAULT_ANGLE_CONSTRAINT_RAD,
 
   joints: null!,

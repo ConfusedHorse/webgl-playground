@@ -2,6 +2,7 @@ import { BackSide, Box3, BufferAttribute, BufferGeometry, CircleGeometry, Float3
 import { fragmentShader } from './shader/fragment';
 import { vertexShader } from './shader/vertex';
 
+export const LIZARD_FACTOR = .5;
 export const LIZARD_RADII = [52, 58, 40, 60, 68, 71, 65, 50, 28, 15, 11, 9, 7, 7, 1];
 
 export interface LizardState {
@@ -59,13 +60,18 @@ export function drawOutlines(scene: Scene, dots: Vector2[]): void {
 export function drawEyes(scene: Scene, eyes: [Vector2, Vector2, number]): void {
   const [left, right, radius] = eyes;
   [left, right].forEach(position => {
-    const geometry = new CircleGeometry(radius);
-    const material = new MeshBasicMaterial({ color: 0xFFFFFF, side: BackSide });
-    const eye = new Mesh(geometry, material);
+    const eyeGeometry = new CircleGeometry(radius);
+    const pupilGeometry = new CircleGeometry(radius * .5);
+    const eyeMaterial = new MeshBasicMaterial({ color: 0xFFFFFF, side: BackSide });
+    const pupilMaterial = new MeshBasicMaterial({ color: 0x000000, side: BackSide });
+    const eye = new Mesh(eyeGeometry, eyeMaterial);
+    const pupil = new Mesh(pupilGeometry, pupilMaterial);
 
     eye.position.x = position.x;
     eye.position.y = position.y;
+    pupil.position.x = position.x;
+    pupil.position.y = position.y;
 
-    scene.add(eye);
+    scene.add(eye, pupil);
   });
 }

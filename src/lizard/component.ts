@@ -1,5 +1,5 @@
 import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
-import { LIZARD_RADII } from './model';
+import { LIZARD_FACTOR, LIZARD_RADII } from './model';
 import { LizardStore } from './store';
 
 @Component({
@@ -17,8 +17,9 @@ export class LizardComponent {
 
   constructor() {
     effect(() => {
-      const { initialize, setRadii, setAngleConstraint } = this.#lizardStore;
+      const { initialize, setFactor, setRadii, setAngleConstraint } = this.#lizardStore;
       initialize(this._canvas().nativeElement);
+      setFactor(LIZARD_FACTOR);
       setRadii(LIZARD_RADII);
       setAngleConstraint(Math.PI / 12);
     }, { allowSignalWrites: true });

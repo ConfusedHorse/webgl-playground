@@ -9,7 +9,7 @@ export function withBody() {
     withState(INITIAL_STATE),
     withRenderer(),
 
-    withComputed(({ joints, radii }) => ({
+    withComputed(({ joints, radii, factor }) => ({
       dots: computed<Vector2[]>(() => {
         if (!joints()) {
           return [];
@@ -17,9 +17,9 @@ export function withBody() {
 
         const [_, ...segments] = joints();
 
-        const distances = radii().map(radius => radius);
+        const distances = radii().map(radius => radius * factor());
         const { position: nosePosition, angle: noseAngle } = joints()[1];
-        const nose = [PI * .875, PI, PI * 1.125].map(offset =>
+        const nose = [PI * .75, PI, PI * 1.25].map(offset =>
           getPosition(nosePosition, noseAngle + offset, distances[1])
         );
         const right = segments.map(({ position, angle }, i) =>
@@ -32,10 +32,19 @@ export function withBody() {
         return [...nose, ...right, ...left];
       }),
     })),
+    withComputed(({ jointDistance, factor }) => ({
+      linkSize: computed<number>(() => jointDistance() * factor()),
+    })),
 
     withMethods(store => ({
+      setFactor(factor: number): void {
+        patchState(store, () => ({ factor }));
+      },
       setRadii(radii: ReadonlyArray<number>): void {
         patchState(store, () => ({ radii }));
+      },
+      setJointDistance(jointDistance: number): void {
+        patchState(store, () => ({ jointDistance }));
       },
       setAngleConstraint(angleConstraint: number): void {
         patchState(store, () => ({ angleConstraint }));
@@ -46,7 +55,7 @@ export function withBody() {
       onInit(store) {
         // initialize joints
         effect(() => {
-          const { radii, jointDistance: linkSize } = store;
+          const { radii, linkSize, factor } = store;
 
           if (!radii().length) {
             return;
@@ -64,7 +73,7 @@ export function withBody() {
 
         // update joints
         effect(() => {
-          const { mousePosition, joints: previous, jointDistance: linkSize, angleConstraint } = store;
+          const { mousePosition, joints: previous, linkSize, angleConstraint } = store;
 
           const previousJoints = untracked(previous);
           const currentMousePosition = mousePosition();

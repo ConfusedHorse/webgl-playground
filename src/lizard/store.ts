@@ -10,11 +10,11 @@ export const LizardStore = signalStore(
   withState(INITIAL_STATE),
   withBody(),
 
-  withComputed(({ joints, radii }) => ({
+  withComputed(({ joints, radii, factor }) => ({
     eyes: computed<[Vector2, Vector2, number]>(() => {
       const { position, angle } = joints()[1];
-      const distance = .5 * radii()[1];
-      const radius = .125 * radii()[1]
+      const distance = .5 * factor() * radii()[1];
+      const radius = .2 * factor() * radii()[1]
       const left = getPosition(position, angle - PI * .5, distance);
       const right = getPosition(position, angle + PI * .5, distance);
 
