@@ -1,6 +1,6 @@
 import { Vector2 } from 'three';
 
-const LINK_DISTANCE = 25;
+const LINK_DISTANCE = 50;
 
 export const PI = Math.PI;
 export const TWO_PI = PI * 2;

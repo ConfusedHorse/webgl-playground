@@ -2,25 +2,30 @@
 import { computed, effect } from '@angular/core';
 import { signalStore, withComputed, withHooks, withState } from '@ngrx/signals';
 import { Vector2 } from 'three';
+import { getPosition, PI } from '../components/body/model';
 import { withBody } from '../components/body/store.feature';
-import { drawBody, drawOutlines, INITIAL_STATE } from './model';
+import { drawBody, drawEyes, drawOutlines, INITIAL_STATE } from './model';
 
 export const LizardStore = signalStore(
   withState(INITIAL_STATE),
   withBody(),
 
-  withComputed(({ dots }) => ({
-    eyes: computed<Vector2[]>(() => {
-      // TODO return coordinates 90 degrees to dots[0] halfway to its radius
+  withComputed(({ joints, radii }) => ({
+    eyes: computed<[Vector2, Vector2, number]>(() => {
+      const { position, angle } = joints()[1];
+      const distance = .5 * radii()[1];
+      const radius = .125 * radii()[1]
+      const left = getPosition(position, angle - PI * .5, distance);
+      const right = getPosition(position, angle + PI * .5, distance);
 
-      return [];
+      return [left, right, radius];
     }),
   })),
 
   withHooks({
     onInit(store) {
       effect(() => {
-        const { dots, scene, camera, renderer } = store;
+        const { scene, camera, renderer, dots, eyes } = store;
 
         if (!dots().length) {
           return;
@@ -28,8 +33,10 @@ export const LizardStore = signalStore(
 
         scene().clear();
 
-        drawBody(scene(), dots())
+        drawBody(scene(), dots());
         drawOutlines(scene(), dots());
+
+        drawEyes(scene(), eyes());
 
         renderer().render(scene(), camera());
       });

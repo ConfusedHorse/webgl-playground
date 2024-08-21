@@ -17,9 +17,9 @@ export function withBody() {
 
         const [_, ...segments] = joints();
 
-        const distances = radii().map(radius => radius * .5);
+        const distances = radii().map(radius => radius);
         const { position: nosePosition, angle: noseAngle } = joints()[1];
-        const nose = [PI * .75, PI, PI * 1.25].map(offset =>
+        const nose = [PI * .875, PI, PI * 1.125].map(offset =>
           getPosition(nosePosition, noseAngle + offset, distances[1])
         );
         const right = segments.map(({ position, angle }, i) =>

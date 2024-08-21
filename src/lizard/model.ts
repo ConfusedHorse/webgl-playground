@@ -1,4 +1,4 @@
-import { BackSide, Box3, BufferAttribute, BufferGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, Scene, ShaderMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
+import { BackSide, Box3, BufferAttribute, BufferGeometry, CircleGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Scene, ShaderMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 import { fragmentShader } from './shader/fragment';
 import { vertexShader } from './shader/vertex';
 
@@ -54,4 +54,18 @@ export function drawOutlines(scene: Scene, dots: Vector2[]): void {
 
     scene.add(line);
   }
+}
+
+export function drawEyes(scene: Scene, eyes: [Vector2, Vector2, number]): void {
+  const [left, right, radius] = eyes;
+  [left, right].forEach(position => {
+    const geometry = new CircleGeometry(radius);
+    const material = new MeshBasicMaterial({ color: 0xFFFFFF, side: BackSide });
+    const eye = new Mesh(geometry, material);
+
+    eye.position.x = position.x;
+    eye.position.y = position.y;
+
+    scene.add(eye);
+  });
 }
