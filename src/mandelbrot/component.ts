@@ -1,5 +1,5 @@
 import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
-import { BoxGeometry, Mesh, ShaderMaterial } from 'three';
+import { BackSide, BoxGeometry, Mesh, ShaderMaterial } from 'three';
 import { fragmentShader } from './shader/fragment';
 import { vertexShader } from './shader/vertex';
 import { MandelbrotStore } from './store';
@@ -25,7 +25,7 @@ export class MandelbrotComponent {
       const { width, height } = dimension();
 
       const geometry = new BoxGeometry(width, height, 1);
-      const material = new ShaderMaterial({ vertexShader, fragmentShader });
+      const material = new ShaderMaterial({ vertexShader, fragmentShader, side: BackSide });
       const cube = new Mesh(geometry, material);
 
       cube.position.x = .5 * width;

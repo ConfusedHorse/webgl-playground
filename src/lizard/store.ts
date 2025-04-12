@@ -25,7 +25,7 @@ export const LizardStore = signalStore(
   withHooks({
     onInit(store) {
       effect(() => {
-        const { scene, camera, renderer, dots, eyes } = store;
+        const { scene, camera, renderer, dots, eyes, material } = store;
 
         if (!dots().length) {
           return;
@@ -33,7 +33,7 @@ export const LizardStore = signalStore(
 
         scene().clear();
 
-        drawBody(scene(), dots());
+        drawBody(scene(), dots(), material());
         drawOutlines(scene(), dots());
 
         drawEyes(scene(), eyes());

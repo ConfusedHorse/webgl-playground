@@ -8,7 +8,7 @@ export function withRenderer() {
   return signalStoreFeature(
     withState(INITIAL_STATE),
 
-    withComputed(({ renderer, dimension }) => ({
+    withComputed(({ renderer }) => ({
       mousePosition: toSignal(fromEvent<MouseEvent>(window, 'mousemove').pipe(
         auditTime(10),
         map(({ x, y }) => new Vector2(x, y)),

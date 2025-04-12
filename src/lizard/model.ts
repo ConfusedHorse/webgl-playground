@@ -1,6 +1,4 @@
-import { Box3, BufferAttribute, BufferGeometry, CatmullRomCurve3, CircleGeometry, Float32BufferAttribute, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Scene, ShaderMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
-import { fragmentShader } from './shader/fragment';
-import { vertexShader } from './shader/vertex';
+import { BufferGeometry, CatmullRomCurve3, CircleGeometry, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Scene, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 
 export const LIZARD_FACTOR = 1;
 export const LIZARD_RADII = [52, 58, 40, 60, 68, 71, 65, 50, 28, 15, 11, 9, 7, 7, 1];
@@ -11,35 +9,11 @@ export interface LizardState {
 export const INITIAL_STATE: LizardState = {
 };
 
-function _setUV(geometry: BufferGeometry): void {
-  const position = geometry.attributes['position'] as BufferAttribute;
-  const box3 = new Box3().setFromBufferAttribute(position);
-  const size = new Vector3();
-  box3.getSize(size);
-
-  const uv = [];
-  const v2 = new Vector2();
-  for (let i = 0; i < position.count; i++) {
-    v2.fromBufferAttribute(position, i);
-    v2.sub(box3.min).divide(size);
-    uv.push(v2.x, v2.y);
-  }
-
-  geometry.setAttribute("uv", new Float32BufferAttribute(uv, 2));
-}
-
-export function drawBody(scene: Scene, dots: Vector2[]): void {
+export function drawBody(scene: Scene, dots: Vector2[], material: Material): void {
   if (dots.length < 3) return;
 
   const shape = createCatmullRomShape(dots);
   const geometry = new ShapeGeometry(shape);
-  _setUV(geometry);
-
-  const material = new ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    transparent: true,
-  });
 
   const mesh = new Mesh(geometry, material);
   scene.add(mesh);

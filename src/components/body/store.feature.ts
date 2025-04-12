@@ -1,6 +1,8 @@
 import { computed, effect, untracked } from '@angular/core';
 import { patchState, signalStoreFeature, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
-import { Vector2 } from 'three';
+import { Material, ShaderMaterial, Vector2 } from 'three';
+import { fragmentShader } from '../../lizard/shader/fragment';
+import { vertexShader } from '../../lizard/shader/vertex';
 import { withRenderer } from '../renderer/store.feature';
 import { constrainAngle, getPosition, getVectorAngle, INITIAL_STATE, Joint, PI } from './model';
 
@@ -34,6 +36,18 @@ export function withBody() {
     })),
     withComputed(({ jointDistance, factor }) => ({
       linkSize: computed<number>(() => jointDistance() * factor()),
+    })),
+    withComputed(({ dimension }) => ({
+      material: computed<Material>(() => new ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          u_canvasWidth: { value: dimension().width },
+          u_canvasHeight: { value: dimension().height },
+          u_opacity: { value: .25 }
+        },
+        transparent: true,
+      })),
     })),
 
     withMethods(store => ({
