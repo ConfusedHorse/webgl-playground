@@ -18,7 +18,7 @@ export class MandelbrotComponent {
   protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });
 
   constructor() {
-    effect(() => this.#lizardStore.initialize(this._canvas().nativeElement), { allowSignalWrites: true });
+    effect(() => this.#lizardStore.initialize(this._canvas().nativeElement));
 
     effect(() => {
       const { renderer, scene, camera, dimension } = this.#lizardStore;

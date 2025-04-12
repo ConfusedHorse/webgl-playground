@@ -69,7 +69,7 @@ export function withBody() {
           }
 
           patchState(store, () => ({ joints }));
-        }, { allowSignalWrites: true });
+        });
 
         // update joints
         effect(() => {
@@ -98,7 +98,7 @@ export function withBody() {
           }
 
           patchState(store, () => ({ joints }));
-        }, { allowSignalWrites: true });
+        });
       },
     }),
   );

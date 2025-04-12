@@ -22,7 +22,7 @@ export class LizardComponent {
       setFactor(LIZARD_FACTOR);
       setRadii(LIZARD_RADII);
       setAngleConstraint(Math.PI / 12);
-    }, { allowSignalWrites: true });
+    });
   }
 
 }
