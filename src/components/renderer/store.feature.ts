@@ -33,7 +33,7 @@ export function withRenderer() {
     })),
     withMethods(store => ({
       initialize(canvas: HTMLCanvasElement): void {
-        const renderer = new WebGLRenderer({ canvas });
+        const renderer = new WebGLRenderer({ canvas, antialias: true });
         const resizeObserver = new ResizeObserver(entries => store.updateDimensions(entries[0].contentRect));
         resizeObserver.observe(renderer.domElement.parentElement as Element);
 

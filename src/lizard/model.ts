@@ -27,7 +27,7 @@ export function drawOutlines(scene: Scene, dots: Vector2[]): void {
     const end = smoothPoints[i + 1];
 
     const geometry = new BufferGeometry().setFromPoints([start, end]);
-    const material = new LineBasicMaterial({ color: 0xFFFFFF });
+    const material = new LineBasicMaterial({ color: 0xFFFFFF, linewidth: 15 });
     const line = new Line(geometry, material);
 
     scene.add(line);
