@@ -8,14 +8,13 @@ export function withRenderer() {
   return signalStoreFeature(
     withState(INITIAL_STATE),
 
-    withComputed(({ renderer }) => ({
+    withComputed(({ renderer, dimension }) => ({
       mousePosition: toSignal(fromEvent<MouseEvent>(window, 'mousemove').pipe(
         auditTime(10),
         map(({ x, y }) => new Vector2(x, y)),
-        map((mousePosition) => {
-          const { x, y } = renderer().domElement.getBoundingClientRect();
-          const offset = new Vector2(x, y);
-          return mousePosition.sub(offset);
+        map(({ x, y }) => {
+          const { x: offsetX, y: offsetY, height } = renderer().domElement.getBoundingClientRect();
+          return new Vector2(x - offsetX, height - y + offsetY)
         }),
         startWith(new Vector2()),
       ), { requireSync: true }),
@@ -24,7 +23,7 @@ export function withRenderer() {
     withMethods(store => ({
       updateDimensions(dimension: Dimension): void {
         const { width, height } = dimension;
-        const camera = new OrthographicCamera(0, width, 0, height, 0, 1);
+        const camera = new OrthographicCamera(0, width, height, 0, 0, 1);
 
         patchState(store, ({ renderer }) => {
           renderer?.setSize(width, height);

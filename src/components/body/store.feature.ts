@@ -55,7 +55,7 @@ export function withBody() {
       onInit(store) {
         // initialize joints
         effect(() => {
-          const { radii, linkSize, factor } = store;
+          const { radii, linkSize } = store;
 
           if (!radii().length) {
             return;

@@ -13,15 +13,15 @@ import { MandelbrotStore } from './store';
 })
 export class MandelbrotComponent {
 
-  #lizardStore = inject(MandelbrotStore);
+  #mandelbrotStore = inject(MandelbrotStore);
 
   protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });
 
   constructor() {
-    effect(() => this.#lizardStore.initialize(this._canvas().nativeElement));
+    effect(() => this.#mandelbrotStore.initialize(this._canvas().nativeElement));
 
     effect(() => {
-      const { renderer, scene, camera, dimension } = this.#lizardStore;
+      const { renderer, scene, camera, dimension } = this.#mandelbrotStore;
       const { width, height } = dimension();
 
       const geometry = new BoxGeometry(width, height, 1);
