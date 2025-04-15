@@ -22,6 +22,10 @@ export function drawLizard(lizardStore: InstanceType<typeof LizardStore>): void 
     ? _generateJoints(target, previousJoints, linkSize, angleConstraint)
     : _initializeJoints(form, linkSize);
 
+  if (previousJoints.length && previousJoints[0].position.distanceTo(joints[0].position) === 0) {
+    return;
+  }
+
   const dots = _generateBodyDots(joints, form, factor);
   const eyes = _generateEyes(joints, form, factor);
 

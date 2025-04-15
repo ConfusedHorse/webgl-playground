@@ -10,7 +10,7 @@ export const TWO_PI = PI * 2;
 export const MOVEMENT_DELAY = 3000;
 
 export const FACTOR = 1;
-export const RADII = [52, 58, 30, 60, 68, 71, 65, 50, 28, 15, 11, 9, 9, 7, 7, 5, 1];
+export const RADII = [52, 58, 30, 60, 68, 71, 65, 50, 28, 15, 11, 9, 9, 7, 7, 5, 5, 10, 20, 10, 1];
 export const JOINT_DISTANCE = 50;
 export const EYES_INDEX = 0;
 export const LEGS_INDECES: [number, number] = [3, 7];
