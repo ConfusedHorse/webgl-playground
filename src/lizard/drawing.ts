@@ -100,7 +100,9 @@ function _generateBodyDots(joints: Joint[], radii: number[], factor: number): Ve
 }
 
 function _drawBody(scene: Scene, dots: Vector2[], material: Material): void {
-  if (dots.length < 3) return;
+  if (dots.length < 3) {
+    return;
+  };
 
   const shape = createCatmullRomShape(dots);
   const geometry = new ShapeGeometry(shape);

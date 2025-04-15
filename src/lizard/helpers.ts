@@ -1,6 +1,6 @@
 import { CatmullRomCurve3, Shape, Vector2, Vector3 } from 'three';
 import { Dimension } from '../components/renderer/model';
-import { ANGLE_CONSTRAINT_RAD, PI, TWO_PI } from './model';
+import { ANGLE_CONSTRAINT_RAD, PI, RADII, TWO_PI } from './model';
 
 export function createCatmullRomShape(points: Vector2[]): Shape {
   const shape = new Shape();
@@ -19,7 +19,7 @@ export function createCatmullRomShape(points: Vector2[]): Shape {
   return shape;
 }
 
-export function createCatmullRom2DPath(points: Vector2[], closed = false, tension = .5, divisions = 100): Vector2[] {
+export function createCatmullRom2DPath(points: Vector2[], closed = false, tension = .5, divisions = 10 * RADII.length): Vector2[] {
   if (points.length < 2) {
     return [];
   };
