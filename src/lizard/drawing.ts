@@ -12,14 +12,14 @@ export function drawLizard(lizardStore: InstanceType<typeof LizardStore>): void 
     renderer,
     camera,
   } = getState(lizardStore);
-  const mousePosition = lizardStore.mousePosition();
   const linkSize = lizardStore.linkSize();
   const material = lizardStore.material();
+  const target = lizardStore.target();
 
   scene.clear();
 
   const joints = previousJoints.length
-    ? _generateJoints(mousePosition, previousJoints, linkSize, angleConstraint)
+    ? _generateJoints(target, previousJoints, linkSize, angleConstraint)
     : _initializeJoints(form, linkSize);
 
   const dots = _generateBodyDots(joints, form, factor);

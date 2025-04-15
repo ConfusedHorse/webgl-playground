@@ -1,4 +1,5 @@
 import { CatmullRomCurve3, Shape, Vector2, Vector3 } from 'three';
+import { Dimension } from '../components/renderer/model';
 import { ANGLE_CONSTRAINT_RAD, PI, TWO_PI } from './model';
 
 export function createCatmullRomShape(points: Vector2[]): Shape {
@@ -40,4 +41,21 @@ export function getPosition(origin: Vector2, angle: number, distance: number): V
 export function constrainAngle(anchor: number, angle: number, constraint: number = ANGLE_CONSTRAINT_RAD): number {
   const angleDifference = Math.atan2(Math.sin(anchor - angle), Math.cos(anchor - angle));
   return Math.abs(angleDifference) > constraint ? anchor - Math.sign(angleDifference) * constraint : angle;
+}
+
+export function constrainTarget(from: Vector2, to: Vector2, maxDistance: number): Vector2 {
+  const direction = to.clone().sub(from);
+  const distance = direction.length();
+
+  if (distance <= maxDistance) {
+    return to.clone();
+  }
+
+  direction.normalize().multiplyScalar(maxDistance);
+  return from.clone().add(direction);
+}
+
+export function getCenter(dimension: Dimension): Vector2 {
+  const { width, height } = dimension;
+  return new Vector2(width * .5, height * .5);
 }

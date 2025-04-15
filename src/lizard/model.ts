@@ -7,6 +7,8 @@ export const FPS = 60;
 export const PI = Math.PI;
 export const TWO_PI = PI * 2;
 
+export const MOVEMENT_DELAY = 3000;
+
 export const FACTOR = 1;
 export const RADII = [52, 58, 30, 60, 68, 71, 65, 50, 28, 15, 11, 9, 9, 7, 7, 5, 1];
 export const JOINT_DISTANCE = 50;
@@ -15,7 +17,7 @@ export const LEGS_INDECES: [number, number] = [3, 7];
 export const LINK_DISTANCE = 50;
 export const ANGLE_CONSTRAINT_RAD = PI / 12;
 
-export interface LizardConfiguration {
+interface LizardConfiguration {
   factor: number;
   form: number[];
   legs: [number, number]; // [front, back]
@@ -26,6 +28,7 @@ export interface LizardConfiguration {
 export interface LizardState {
   configuration: LizardConfiguration;
   joints: Joint[];
+  target: Vector2;
 }
 
 export const INITIAL_STATE: LizardState = {
@@ -37,6 +40,7 @@ export const INITIAL_STATE: LizardState = {
     angleConstraint: ANGLE_CONSTRAINT_RAD,
   },
   joints: [],
+  target: new Vector2(),
 };
 
 type UnwrapSignal<T> =

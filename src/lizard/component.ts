@@ -19,7 +19,6 @@ export class LizardComponent {
 
   constructor() {
     const lizardBusiness$ = interval(1000 / FPS).pipe(
-      // tap(asd => console.log(asd)),
       tap(_ => drawLizard(this.#lizardStore)),
       takeUntilDestroyed(),
     );
@@ -28,13 +27,6 @@ export class LizardComponent {
       this.#lizardStore.initialize(this._canvas().nativeElement);
       lizardBusiness$.subscribe();
     });
-
-    //   ;
-    //   const { initialize, setFactor, setRadii, setAngleConstraint } = this.#lizardStore;
-    //   setFactor(LIZARD_FACTOR);
-    //   setRadii(LIZARD_RADII);
-    //   setAngleConstraint(Math.PI / 8);
-    // });
   }
 
 }
