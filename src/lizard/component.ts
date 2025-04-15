@@ -1,5 +1,8 @@
 import { Component, effect, ElementRef, inject, viewChild } from '@angular/core';
-import { LIZARD_FACTOR, LIZARD_RADII } from './model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval, tap } from 'rxjs';
+import { drawLizard } from './drawing';
+import { FPS } from './model';
 import { LizardStore } from './store';
 
 @Component({
@@ -11,18 +14,27 @@ import { LizardStore } from './store';
 })
 export class LizardComponent {
 
-  #lizardStore = inject(LizardStore);
-
+  readonly #lizardStore = inject(LizardStore);
   protected readonly _canvas = viewChild.required<ElementRef, ElementRef<HTMLCanvasElement>>('canvas', { read: ElementRef });
 
   constructor() {
+    const lizardBusiness$ = interval(1000 / FPS).pipe(
+      // tap(asd => console.log(asd)),
+      tap(_ => drawLizard(this.#lizardStore)),
+      takeUntilDestroyed(),
+    );
+
     effect(() => {
-      const { initialize, setFactor, setRadii, setAngleConstraint } = this.#lizardStore;
-      initialize(this._canvas().nativeElement);
-      setFactor(LIZARD_FACTOR);
-      setRadii(LIZARD_RADII);
-      setAngleConstraint(Math.PI / 8);
+      this.#lizardStore.initialize(this._canvas().nativeElement);
+      lizardBusiness$.subscribe();
     });
+
+    //   ;
+    //   const { initialize, setFactor, setRadii, setAngleConstraint } = this.#lizardStore;
+    //   setFactor(LIZARD_FACTOR);
+    //   setRadii(LIZARD_RADII);
+    //   setAngleConstraint(Math.PI / 8);
+    // });
   }
 
 }
