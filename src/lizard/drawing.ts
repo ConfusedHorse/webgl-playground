@@ -110,7 +110,7 @@ function _drawBody(scene: Scene, dots: Vector2[], material: Material): void {
 }
 
 function _drawOutlines(scene: Scene, dots: Vector2[]): void {
-  const smoothPoints = createCatmullRom2DPath(dots, true, .5, 100);
+  const smoothPoints = createCatmullRom2DPath(dots, true);
 
   for (let i = 0; i < smoothPoints.length - 1; i++) {
     const start = smoothPoints[i];
