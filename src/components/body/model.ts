@@ -12,7 +12,7 @@ export interface Joint {
   angle: number;
 }
 
-export interface LizardState {
+export interface BodyState {
   factor: number;
   radii: ReadonlyArray<number>;
   jointDistance: number;
@@ -21,7 +21,7 @@ export interface LizardState {
   joints: ReadonlyArray<Joint>;
 }
 
-export const INITIAL_STATE: LizardState = {
+export const INITIAL_STATE: BodyState = {
   factor: DEFAULT_FACTOR,
   radii: [],
   jointDistance: DEFAULT_LINK_DISTANCE,

@@ -10,7 +10,7 @@ export function withRenderer() {
 
     withComputed(({ renderer }) => ({
       mousePosition: toSignal(fromEvent<MouseEvent>(window, 'mousemove').pipe(
-        auditTime(10),
+        auditTime(1),
         map(({ x, y }) => new Vector2(x, y)),
         map(({ x, y }) => {
           const { x: offsetX, y: offsetY, height } = renderer().domElement.getBoundingClientRect();

@@ -21,7 +21,7 @@ export class LizardComponent {
       initialize(this._canvas().nativeElement);
       setFactor(LIZARD_FACTOR);
       setRadii(LIZARD_RADII);
-      setAngleConstraint(Math.PI / 12);
+      setAngleConstraint(Math.PI / 8);
     });
   }
 

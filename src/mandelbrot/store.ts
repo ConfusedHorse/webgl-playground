@@ -1,7 +1,7 @@
 
-import { signalStore } from '@ngrx/signals';
+import { signalStore, withFeature } from '@ngrx/signals';
 import { withRenderer } from '../components/renderer/store.feature';
 
 export const MandelbrotStore = signalStore(
-  withRenderer(),
+  withFeature(withRenderer),
 );

@@ -1,13 +1,18 @@
 import { BufferGeometry, CatmullRomCurve3, CircleGeometry, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Scene, Shape, ShapeGeometry, Vector2, Vector3 } from 'three';
 
 export const LIZARD_FACTOR = 1;
-export const LIZARD_RADII = [52, 58, 40, 60, 68, 71, 65, 50, 28, 15, 11, 9, 7, 7, 1];
+export const LIZARD_RADII = [52, 58, 30, 60, 68, 71, 65, 50, 28, 15, 11, 9, 9, 7, 7, 5, 1];
+export const LIZARD_EYES_INDEX = 0;
+export const LIZARD_LEGS_INDECES: [number, number] = [3, 7];
 
-export interface LizardState {
+export interface LizardState { }
+
+export const INITIAL_STATE: LizardState = {};
+
+export interface Leg {
+  index: number;
+  dots: Vector2[];
 }
-
-export const INITIAL_STATE: LizardState = {
-};
 
 export function drawBody(scene: Scene, dots: Vector2[], material: Material): void {
   if (dots.length < 3) return;
@@ -63,6 +68,7 @@ function createCatmullRom2DPath(points: Vector2[], closed = false, tension = .5,
 
 export function drawEyes(scene: Scene, eyes: [Vector2, Vector2, number]): void {
   const [left, right, radius] = eyes;
+
   [left, right].forEach(position => {
     const eyeGeometry = new CircleGeometry(radius);
     const pupilGeometry = new CircleGeometry(radius * .5);

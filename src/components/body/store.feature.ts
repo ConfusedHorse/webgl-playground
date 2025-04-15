@@ -1,5 +1,5 @@
 import { computed, effect, untracked } from '@angular/core';
-import { patchState, signalStoreFeature, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStoreFeature, withComputed, withFeature, withHooks, withMethods, withState } from '@ngrx/signals';
 import { Material, ShaderMaterial, Vector2 } from 'three';
 import { fragmentShader } from '../../lizard/shader/fragment';
 import { vertexShader } from '../../lizard/shader/vertex';
@@ -9,7 +9,7 @@ import { constrainAngle, getPosition, getVectorAngle, INITIAL_STATE, Joint, PI }
 export function withBody() {
   return signalStoreFeature(
     withState(INITIAL_STATE),
-    withRenderer(),
+    withFeature(withRenderer),
 
     withComputed(({ joints, radii, factor }) => ({
       dots: computed<Vector2[]>(() => {
@@ -22,7 +22,7 @@ export function withBody() {
         const distances = radii().map(radius => radius * factor());
         const { position: nosePosition, angle: noseAngle } = joints()[1];
         const nose = [PI * .75, PI, PI * 1.25].map(offset =>
-          getPosition(nosePosition, noseAngle + offset, distances[1])
+          getPosition(nosePosition, noseAngle + offset, distances[0])
         );
         const right = segments.map(({ position, angle }, i) =>
           getPosition(position, angle - PI * .5, distances[i])
