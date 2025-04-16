@@ -17,7 +17,7 @@ export const ANGLE_CONSTRAINT_RAD = PI / 12;
 interface LizardConfiguration {
   factor: number;
   form: number[];
-  limbAttachment: [number, number]; // [front, back]
+  limbAttachments: [number, number]; // [front, back]
   vertebraeDistance: number;
   angleConstraint: number;
 }
@@ -34,7 +34,7 @@ export const INITIAL_STATE: LizardState = {
     factor: FACTOR,
     form: RADII,
     vertebraeDistance: VERTABRAE_DISTANCE,
-    limbAttachment: LIMB_INDECES,
+    limbAttachments: LIMB_INDECES,
     angleConstraint: ANGLE_CONSTRAINT_RAD,
   },
   spine: [],
@@ -47,4 +47,4 @@ export interface Vertabra {
   angle: number;
 }
 
-export type Limb = Vector2[];
+export type Limb = [Vector2, Vector2, Vector2];

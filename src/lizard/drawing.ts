@@ -1,5 +1,5 @@
 import { getState } from '@ngrx/signals';
-import { BufferGeometry, CircleGeometry, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Scene, ShapeGeometry, Vector2 } from 'three';
+import { BufferGeometry, CircleGeometry, Line, LineBasicMaterial, Material, Mesh, MeshBasicMaterial, Scene, ShaderMaterial, ShapeGeometry, Vector2 } from 'three';
 import { constrainAngle, createCatmullRom2DPath, createCatmullRomShape, getPosition, getVectorAngle } from './helpers';
 import { EYES_INDEX, Limb, PI, Vertabra } from './model';
 import { LizardStore } from './store';
@@ -8,7 +8,7 @@ export function drawLizard(lizardStore: InstanceType<typeof LizardStore>): void 
   const {
     spine: previousVertabrae,
     limbs: previousLimbs,
-    configuration: { angleConstraint, form, factor, limbAttachment: limbAttachments },
+    configuration: { angleConstraint, form, factor, limbAttachments },
     scene,
     renderer,
     camera,
@@ -35,11 +35,7 @@ export function drawLizard(lizardStore: InstanceType<typeof LizardStore>): void 
   _drawEyes(scene, eyes);
 
   const limbs = _generateLimbs(spine, form, factor, limbAttachments, previousLimbs);
-  limbs.forEach(limb => {
-    _drawOutlines(scene, limb, .5, 20);
-    _drawBody(scene, limb, material, .5, 20);
-  });
-  // _testDots(scene, limbs.flat());
+  _drawLimbs(scene, limbs, material);
 
   renderer.render(scene, camera);
 
@@ -137,7 +133,7 @@ function _drawOutlines(scene: Scene, dots: Vector2[], tension = .5, divisions = 
 
 function _generateEyes(spine: Vertabra[], radii: number[], factor: number): [Vector2, Vector2, number] {
   const { position, angle } = spine[EYES_INDEX + 1];
-  const distance = .5 * factor * radii[EYES_INDEX];
+  const distance = .75 * factor * radii[EYES_INDEX];
   const radius = .2 * factor * radii[EYES_INDEX];
   const left = getPosition(position, angle - PI * .5, distance);
   const right = getPosition(position, angle + PI * .5, distance);
@@ -161,30 +157,33 @@ function _drawEyes(scene: Scene, eyes: [Vector2, Vector2, number]): void {
     pupil.position.x = position.x;
     pupil.position.y = position.y;
 
-    scene.add(eye, pupil);
+    scene.add(eye/*, pupil*/);
   });
 }
 
 function _generateLimbs(vertabrae: Vertabra[], form: number[], factor: number, limbAttachments: [number, number], previousLimbs: Limb[]): Limb[] {
+  const length = (form[limbAttachments[0]] + form[limbAttachments[1]]) * .5 * factor;
   const sockets = Array.from(limbAttachments).map(limbAttachment => {
     const { position, angle } = vertabrae[limbAttachment + 1];
 
-    const length = form[limbAttachment] * factor;
-    const left = getPosition(position, angle - PI * .5, length);
-    const right = getPosition(position, angle + PI * .5, length);
+    const left = getPosition(position, angle - PI * .5, length * .75);
+    const right = getPosition(position, angle + PI * .5, length * .75);
 
     return [
       [angle - PI * .5, length, left] as const, // left
       [angle + PI * .5, length, right] as const, // right
     ];
-  }).flat();
+  }).flat(); // [fl, fr, bl, br]
 
   return sockets.map((socket, index) => _generateLimb(...socket, index, previousLimbs[index]?.at(-1)));
 }
 
 function _generateLimb(angle: number, length: number, shoulder: Vector2, index: number, previousFoot?: Vector2): Limb {
-  const adjustAngle = index % 2 ? 1 : -1;
-  const foot = !previousFoot || previousFoot.distanceTo(shoulder) >= 2 * length ? getPosition(shoulder, angle + PI * .25 * adjustAngle, length) : previousFoot;
+  length *= .75;
+
+  const adjustAngle = index < 2 ? .25 : .33;
+  const invert = index % 2 ? 1 : -1;
+  const foot = !previousFoot || previousFoot.distanceTo(shoulder) >= 2 * length ? getPosition(shoulder, angle + PI * invert * adjustAngle, length * 2) : previousFoot;
   const elbow = _generateElbow(shoulder, foot, length, [0, 3].includes(index));
 
   return [shoulder, elbow, foot];
@@ -206,16 +205,36 @@ function _generateElbow(shoulder: Vector2, foot: Vector2, length: number, invert
   return center.add(offset);
 }
 
-// FIXME REMOVE - ONLY FOR DEBUGGING
-function _testDots(scene: Scene, vertices: Vector2[]): void {
-  vertices.forEach((vector) => {
-    const dotGeometry = new CircleGeometry(10);
-    const dotMaterial = new MeshBasicMaterial({ color: 0x00FF00 });
-    const dot = new Mesh(dotGeometry, dotMaterial);
-
-    dot.position.x = vector.x;
-    dot.position.y = vector.y;
-
-    scene.add(dot);
-  });
+function _drawLimbs(scene: Scene, limbs: Limb[], material: ShaderMaterial): void {
+  limbs.forEach(limb => _drawLimb(scene, limb, material));
 }
+
+function _drawLimb(scene: Scene, [shoulderPosition, elbowPosition, footPosition]: Limb, material: ShaderMaterial): void {
+  const shoulderAngle = getVectorAngle(shoulderPosition, elbowPosition);
+  const elbowAngle = getVectorAngle(shoulderPosition, footPosition);
+  const footAngle = getVectorAngle(elbowPosition, footPosition);
+
+  const dots = _generateBodyDots([
+    { angle: 0, position: new Vector2() },
+    { angle: footAngle, position: footPosition },
+    { angle: elbowAngle, position: elbowPosition },
+    { angle: shoulderAngle, position: shoulderPosition },
+  ], [10, 10, 10], 1)
+
+  _drawOutlines(scene, dots, .5, 20);
+  _drawBody(scene, dots, material, .5, 20);
+}
+
+// FIXME REMOVE LATER - FOR DEBUGGING ONLY
+// function _testDots(scene: Scene, vertices: Vector2[]): void {
+//   vertices.forEach((vector) => {
+//     const dotGeometry = new CircleGeometry(10);
+//     const dotMaterial = new MeshBasicMaterial({ color: 0x00FF00 });
+//     const dot = new Mesh(dotGeometry, dotMaterial);
+
+//     dot.position.x = vector.x;
+//     dot.position.y = vector.y;
+
+//     scene.add(dot);
+//   });
+// }

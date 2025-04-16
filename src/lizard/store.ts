@@ -22,7 +22,7 @@ export const LizardStore = signalStore(
       uniforms: {
         u_canvasWidth: { value: dimension().width },
         u_canvasHeight: { value: dimension().height },
-        u_opacity: { value: .25 }
+        u_opacity: { value: .25 },
       },
       transparent: true,
     })),

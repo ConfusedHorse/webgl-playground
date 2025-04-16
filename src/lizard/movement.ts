@@ -47,7 +47,7 @@ export function targetBehavior(store: InstanceType<typeof LizardStore>): Signal<
     switchMap(recentlyMoved => recentlyMoved ? mouseTarget$ : autoTarget$),
     map(target => {
       const { width, height } = store.dimension() ?? { width: 0, height: 0 };
-      const constraint = Math.max(height, width) * .01 * .75;
+      const constraint = Math.max(height, width) * .01 * .5;
       return constrainTarget(store.target(), target, constraint);
     }),
   );
