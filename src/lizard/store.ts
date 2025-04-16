@@ -24,7 +24,8 @@ export const LizardStore = signalStore(
         u_canvasHeight: { value: dimension().height },
         u_opacity: { value: .25 },
       },
-      transparent: true,
+      transparent: false,
+      depthWrite: false,
     })),
   })),
 

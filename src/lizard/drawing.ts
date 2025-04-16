@@ -30,9 +30,9 @@ export function drawLizard(lizardStore: InstanceType<typeof LizardStore>): void 
   const dots = _generateBodyDots(spine, form, factor);
   const eyes = _generateEyes(spine, form, factor);
 
-  _drawBody(scene, dots, material);
-  _drawOutlines(scene, dots);
-  _drawEyes(scene, eyes);
+  _drawBody(scene, dots, material, 2);
+  _drawOutlines(scene, dots, 2);
+  _drawEyes(scene, eyes, 3);
 
   const limbs = _generateLimbs(spine, form, factor, limbAttachments, previousLimbs);
   _drawLimbs(scene, limbs, material);
@@ -104,7 +104,7 @@ function _generateBodyDots(spine: Vertabra[], radii: number[], factor: number): 
   return [...nose, ...right, ...left];
 }
 
-function _drawBody(scene: Scene, dots: Vector2[], material: Material, tension = .5, divisions = 100): void {
+function _drawBody(scene: Scene, dots: Vector2[], material: Material, renderOrder = 1, tension = .5, divisions = 100): void {
   if (dots.length < 3) {
     return;
   };
@@ -113,10 +113,11 @@ function _drawBody(scene: Scene, dots: Vector2[], material: Material, tension = 
   const geometry = new ShapeGeometry(shape);
 
   const mesh = new Mesh(geometry, material);
+  mesh.renderOrder = renderOrder;
   scene.add(mesh);
 }
 
-function _drawOutlines(scene: Scene, dots: Vector2[], tension = .5, divisions = 100): void {
+function _drawOutlines(scene: Scene, dots: Vector2[], renderOrder = 1, tension = .5, divisions = 100): void {
   const smoothPoints = createCatmullRom2DPath(dots, true, tension, divisions);
 
   for (let i = 0; i < smoothPoints.length - 1; i++) {
@@ -125,8 +126,9 @@ function _drawOutlines(scene: Scene, dots: Vector2[], tension = .5, divisions = 
 
     const geometry = new BufferGeometry().setFromPoints([start, end]);
     const material = new LineBasicMaterial({ color: 0xFFFFFF });
-    const line = new Line(geometry, material);
 
+    const line = new Line(geometry, material);
+    line.renderOrder = renderOrder;
     scene.add(line);
   }
 }
@@ -141,23 +143,18 @@ function _generateEyes(spine: Vertabra[], radii: number[], factor: number): [Vec
   return [left, right, radius];
 }
 
-function _drawEyes(scene: Scene, eyes: [Vector2, Vector2, number]): void {
+function _drawEyes(scene: Scene, eyes: [Vector2, Vector2, number], renderOrder = 1): void {
   const [left, right, radius] = eyes;
 
   [left, right].forEach(position => {
     const eyeGeometry = new CircleGeometry(radius);
-    const pupilGeometry = new CircleGeometry(radius * .5);
     const eyeMaterial = new MeshBasicMaterial({ color: 0xFFFFFF });
-    const pupilMaterial = new MeshBasicMaterial({ color: 0x000000 });
     const eye = new Mesh(eyeGeometry, eyeMaterial);
-    const pupil = new Mesh(pupilGeometry, pupilMaterial);
 
     eye.position.x = position.x;
     eye.position.y = position.y;
-    pupil.position.x = position.x;
-    pupil.position.y = position.y;
-
-    scene.add(eye/*, pupil*/);
+    eye.renderOrder = renderOrder;
+    scene.add(eye);
   });
 }
 
@@ -166,8 +163,9 @@ function _generateLimbs(vertabrae: Vertabra[], form: number[], factor: number, l
   const sockets = Array.from(limbAttachments).map(limbAttachment => {
     const { position, angle } = vertabrae[limbAttachment + 1];
 
-    const left = getPosition(position, angle - PI * .5, length * .75);
-    const right = getPosition(position, angle + PI * .5, length * .75);
+    const offset = form[limbAttachment] * factor;
+    const left = getPosition(position, angle - PI * .5, offset * .75);
+    const right = getPosition(position, angle + PI * .5, offset * .75);
 
     return [
       [angle - PI * .5, length, left] as const, // left
@@ -221,8 +219,8 @@ function _drawLimb(scene: Scene, [shoulderPosition, elbowPosition, footPosition]
     { angle: shoulderAngle, position: shoulderPosition },
   ], [10, 10, 10], 1)
 
-  _drawOutlines(scene, dots, .5, 20);
-  _drawBody(scene, dots, material, .5, 20);
+  _drawOutlines(scene, dots, 1, .5, 20);
+  _drawBody(scene, dots, material, 1, .5, 20);
 }
 
 // FIXME REMOVE LATER - FOR DEBUGGING ONLY
