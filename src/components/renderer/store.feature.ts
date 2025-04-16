@@ -44,12 +44,18 @@ export function withRenderer() {
         }));
 
         store.updateDimensions(renderer.domElement);
+
+        renderer.domElement.addEventListener('webglcontextlost', (event) => {
+          console.log('handled webglcontextlost', event);
+          window.location.reload();
+        });
       },
     })),
 
     withHooks({
       onDestroy({ renderer, resizeObserver }) {
         resizeObserver().unobserve(renderer().domElement.parentElement as Element);
+        renderer().dispose();
       },
     }),
   );

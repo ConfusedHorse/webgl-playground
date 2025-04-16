@@ -2,9 +2,9 @@ import { CatmullRomCurve3, Shape, Vector2, Vector3 } from 'three';
 import { Dimension } from '../components/renderer/model';
 import { ANGLE_CONSTRAINT_RAD, PI, RADII, TWO_PI } from './model';
 
-export function createCatmullRomShape(points: Vector2[]): Shape {
+export function createCatmullRomShape(points: Vector2[], tension = .5, divisions = 100): Shape {
   const shape = new Shape();
-  const curvePoints = createCatmullRom2DPath(points, true);
+  const curvePoints = createCatmullRom2DPath(points, true, tension, divisions);
 
   if (curvePoints.length === 0) {
     return shape;
