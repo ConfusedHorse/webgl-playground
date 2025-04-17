@@ -5,8 +5,6 @@ import { ROUTES } from './routes';
 @Component({
   imports: [
     RouterOutlet,
-    // RouterLink,
-    // RouterLinkActive,
   ],
   selector: 'app-root',
   templateUrl: './component.html',

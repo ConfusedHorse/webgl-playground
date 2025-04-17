@@ -19,7 +19,7 @@ export class LizardComponent {
 
   constructor() {
     const lizardBusiness$ = interval(1000 / FPS).pipe(
-      tap(_ => drawLizard(this.#lizardStore)),
+      tap(_ => requestAnimationFrame(() => drawLizard(this.#lizardStore))),
       takeUntilDestroyed(),
     );
 

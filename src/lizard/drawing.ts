@@ -164,8 +164,8 @@ function _generateLimbs(vertabrae: Vertabra[], form: number[], factor: number, l
     const { position, angle } = vertabrae[limbAttachment + 1];
 
     const offset = form[limbAttachment] * factor;
-    const left = getPosition(position, angle - PI * .5, offset * .75);
-    const right = getPosition(position, angle + PI * .5, offset * .75);
+    const left = getPosition(position, angle - PI * .5, offset * .6);
+    const right = getPosition(position, angle + PI * .5, offset * .6);
 
     return [
       [angle - PI * .5, length, left] as const, // left

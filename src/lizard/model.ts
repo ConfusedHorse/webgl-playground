@@ -1,7 +1,7 @@
 import { Vector2 } from 'three';
 
 export const FPS = 60;
-export const FACTOR = .75;
+export const FACTOR = .5;
 export const MOVEMENT_DELAY = 3000;
 
 export const PI = Math.PI;
