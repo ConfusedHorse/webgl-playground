@@ -28,6 +28,7 @@
     "@angular/cli": "^19.2.7",
     "@angular/compiler-cli": "^19.2.6",
     "@types/three": "^0.175.0",
+    "angular-cli-ghpages": "^2.0.3",
     "angular-eslint": "19.3.0",
     "eslint": "^9.8.0",
     "typescript": "~5.8.3",

@@ -44,6 +44,7 @@
             "outputPath": "dist/webgl-playground",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/webgl-playground/",
             "polyfills": [
               "zone.js"
             ],
@@ -108,6 +109,9 @@
               "src/**/*.html"
             ]
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
