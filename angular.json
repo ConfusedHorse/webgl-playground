@@ -44,7 +44,6 @@
             "outputPath": "dist/webgl-playground",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "baseHref": "/webgl-playground/",
             "polyfills": [
               "zone.js"
             ],
@@ -111,7 +110,10 @@
           }
         },
         "deploy": {
-          "builder": "angular-cli-ghpages:deploy"
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "https://confusedhorse.github.io/webgl-playground/"
+          }
         }
       }
     }

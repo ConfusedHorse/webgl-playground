@@ -1,6 +1,6 @@
 import { Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { auditTime, distinctUntilChanged, fromEvent, interval, map, merge, of, shareReplay, startWith, switchMap, timer, withLatestFrom } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, fromEvent, interval, map, merge, of, shareReplay, startWith, switchMap, timer, withLatestFrom } from 'rxjs';
 import { Vector2 } from 'three';
 import { constrainTarget, getCenter } from './helpers';
 import { FPS, MOVEMENT_DELAY } from './model';
@@ -9,9 +9,16 @@ import { LizardStore } from './store';
 export function targetBehavior(store: InstanceType<typeof LizardStore>): Signal<Vector2> {
   const clock$ = interval(1000 / FPS).pipe(shareReplay({ refCount: true, bufferSize: 1 }));
 
-  const mouseMove$ = fromEvent<MouseEvent>(window, 'mousemove').pipe(
+  const mouseMove$ = merge(
+    fromEvent<MouseEvent>(window, 'mousemove'),
+    fromEvent<TouchEvent>(window, 'touchmove').pipe(
+      map(({ touches }) => touches.item(0)),
+      filter(touch => !!touch),
+      map(({ clientX: x, clientY: y }) => ({ x, y })),
+    ),
+  ).pipe(
     auditTime(1),
-    map(({ x, y }) => new Vector2(x, y)),
+    map<Pick<MouseEvent, 'x' | 'y'>, Vector2>(({ x, y }) => new Vector2(x, y)),
     map(({ x, y }) => {
       const { x: offsetX, y: offsetY, height } = store.renderer().domElement.getBoundingClientRect();
       return new Vector2(x - offsetX, height - y + offsetY);
